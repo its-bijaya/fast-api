@@ -19,21 +19,33 @@ class RequestCount(Base):
 SessionLocal = sessionmaker(bind=engine)
 Base.metadata.create_all(bind=engine)
 
-# Increment count in the database
+# Function to increment the request count
 def increment_count():
     db = SessionLocal()
-    count_row = db.query(RequestCount).first()
-    if not count_row:
-        count_row = RequestCount(count=1)
-        db.add(count_row)
-    else:
+    try:
+        # Get the current count or create a new row if it doesn't exist
+        count_row = db.query(RequestCount).first()
+        if not count_row:
+            count_row = RequestCount(count=1)
+            db.add(count_row)
+        
+        # Increment the count
         count_row.count += 1
-    db.commit()
-    db.refresh(count_row)
-    db.close()
-    return count_row.count
+        
+        # Commit the changes
+        db.commit()
+        db.refresh(count_row)
+        
+        # Return the updated count
+        return count_row.count
+    finally:
+        db.close()
 
 @app.get("/count")
 async def get_count():
     current_count = increment_count()
     return {"count": current_count}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
