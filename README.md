@@ -24,7 +24,7 @@ Make sure you have the following installed on your local machine:
 ## Getting Started
 
 1. Clone the Repository
-git clone https://github.com/itsbijaya/fast-api.git
+git clone https://github.com/its-bijaya/fast-api.git
 cd fast-api
 
 2. Run the Application
